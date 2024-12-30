@@ -52,7 +52,7 @@ def assign_secret_santa_naive(gifterFromID, cur):
 
 # slightly better approach - randomly pick a name ONLY from remaining ungifted people, excluding this person
 # still reject if it's someone who gifted this person forms a cycle before final gifter
-def assign_secret_santa_naive(gifterFromID, cur):
+def assign_secret_santa_smartRandomize(gifterFromID, cur):
     gifters = len(gifterFromID.values())
     gifted = 0
     
@@ -98,7 +98,16 @@ class Gifter:
         self.gifted_to = gifted_to
 
 
-def get_names():
+def get_names(input_func=input):
+    """
+    Collects 10 names from user input or a provided input function (mocked during testing).
+
+    Args:
+        input_func: Function to use for input. Defaults to built-in input().
+    
+    Returns:
+        dict: A dictionary mapping IDs to Gifter objects.
+    """
 
     # Initialize an empty dict
     gifterFromID = dict()
