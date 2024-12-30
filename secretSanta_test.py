@@ -47,7 +47,7 @@ class TestGeneric:
         """Test that the naive approach with 10 participants can generate a valid Secret Santa linked list."""
         print("Running test_naive_10_participants")
 
-        # 
+        # valid list would contain all 10 elements in a connected list
 
 
         assert self.test_resource == "Test Resource"
