@@ -52,16 +52,33 @@ def assign_secret_santa_naive(gifterFromID, cur):
 
 # slightly better approach - randomly pick a name ONLY from remaining ungifted people, excluding this person
 # still reject if it's someone who gifted this person forms a cycle before final gifter
-def assign_secret_santa_smartRandomize(gifterFromID, cur):
+def assign_secret_santa_smartRandomize(gifterFromID, originalGifter):
     gifters = len(gifterFromID.values())
     gifted = 0
     
-    while gifted < gifters:
+    unassignedGifters = list(gifterFromID.keys()) # this is only "available" and valid giftees
+    unassignedGifters.remove(originalGifter.id) # remove the current person from the list of available giftees
+
+    cur = originalGifter
+
+    while gifted < (gifters - 1): # we need to make sure the last person is gifting to the original gifter
         print("")
         print("Finding a giftee for " + cur.name)
-        new_id = random.randint(0, 9)
+        
+        
+
+        # we only need to consider unassigned gifters, minus the current person
+        print(f"# gifted: {gifted}")
+        
+        new_relative_id = random.randint(0, 10 - gifted - 2) # subtract 2 because we are 0-indexed and we need to exclude the current person
+        # now, we need to find the actual person from the list of unassigned gifters
+        print(f"Relative ID: {new_relative_id}")
+        print(f"Unassigned gifters: {unassignedGifters}")
+        
+        new_id = unassignedGifters[new_relative_id]
         print(f"Trying {gifterFromID[new_id].name}")
 
+        # should not have to check for "gifted" or "same person" - we are only considering unassigned gifters
         if gifterFromID[new_id].gifted:
             print("Already gifted")
             continue
@@ -72,6 +89,7 @@ def assign_secret_santa_smartRandomize(gifterFromID, cur):
             print("Giftee gifted this person")
             continue
         # we can only allow a cycle IF this is the last person to gift 
+        # this will need adjusted here - let's just automaticallly gift to the original gifter if this is the last person
         elif gifted < (gifters - 1) and gifterFromID[new_id].gifted_to is not None: 
             print("Cycle detected - not last person")
             continue
@@ -79,9 +97,17 @@ def assign_secret_santa_smartRandomize(gifterFromID, cur):
             print("valid giftee")
             print(f"{cur.name} is gifting to {gifterFromID[new_id].name}")
             cur.set_gifted_to(gifterFromID[new_id])
+            unassignedGifters.remove(new_id)
             cur = gifterFromID[new_id]
             cur.set_gifted()
             gifted += 1
+
+    # last person - gift to original gifter
+    print("Last person - gifting to original gifter")
+    cur.set_gifted_to(originalGifter)
+    cur = originalGifter
+    cur.set_gifted()
+    gifted += 1
 
 # linked list element
 class Gifter:
@@ -98,7 +124,7 @@ class Gifter:
         self.gifted_to = gifted_to
 
 
-def get_names(input_func=input):
+def get_names(input_func=input, num_gifters=10):
     """
     Collects 10 names from user input or a provided input function (mocked during testing).
 

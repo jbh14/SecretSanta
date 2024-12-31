@@ -1,8 +1,10 @@
 import random
 from secretSanta_util import get_names, Gifter, assign_secret_santa_smartRandomize
 
-def main() -> Gifter:
-    gifterFromID = get_names()
+def createSecretSantaAssignments(gifterFromID = None) -> Gifter:
+    
+    if not gifterFromID:
+        gifterFromID = get_names()
 
     # pick a random name to start with
     start_id = random.randint(0, 9)
@@ -22,5 +24,4 @@ def main() -> Gifter:
     return gifterFromID[start_id]  # return the first person in the linked list
 
 if __name__ == "__main__":
-    secretSantaLinkedList = main()
-    
+    secretSantaLinkedList = createSecretSantaAssignments()
