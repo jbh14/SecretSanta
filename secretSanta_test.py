@@ -1,5 +1,6 @@
 from unittest.mock import patch
 import pytest
+import time
 import secretSanta_util
 import secretSanta_naiveRandomize
 import secretSanta_smartRandomize
@@ -60,7 +61,11 @@ class TestGeneric:
             gifterFromID = secretSanta_util.get_names()
 
         # trigger the naive randomization assignment
+        start_time = time.time()  # Record the start time
         head = secretSanta_naiveRandomize.createSecretSantaAssignments(gifterFromID)
+        end_time = time.time()  # Record the end time
+        elapsed_time = end_time - start_time  # Calculate elapsed time
+        print(f"Elapsed time: {elapsed_time}")
 
         # Traverse the linked list and ensure we have a valid Secret Santa assignment
         cur = head
@@ -87,8 +92,12 @@ class TestGeneric:
         with patch("builtins.input", side_effect=mock_input):    
             gifterFromID = secretSanta_util.get_names()
 
-        # trigger the naive randomization assignment
+        # trigger the naive randomization assignment        
+        start_time = time.time()  # Record the start time
         head = secretSanta_smartRandomize.createSecretSantaAssignments(gifterFromID)
+        end_time = time.time()  # Record the end time
+        elapsed_time = end_time - start_time  # Calculate elapsed time
+        print(f"Elapsed time: {elapsed_time}")
 
         # Traverse the linked list and ensure we have a valid Secret Santa assignment
         cur = head
@@ -100,3 +109,5 @@ class TestGeneric:
 
         # Assert that the linked list is correctly formed
         assert counter == 10
+
+    # def test_naive_100_participants(self):
