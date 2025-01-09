@@ -4,6 +4,7 @@ import time
 import secretSanta_util
 import secretSanta_naiveRandomize
 import secretSanta_smartRandomize
+from faker import Faker
 
 class TestGeneric:
     @classmethod
@@ -150,7 +151,7 @@ class TestGeneric:
         cur = head
         counter = 0
         while cur.gifted_to is not None and counter < 100:
-            print(f"{cur.name} --> ")
+            #print(f"{cur.name} --> ")
             
             # check for repeated names
             if cur.gifted_to.name in names_assigned:
@@ -166,7 +167,7 @@ class TestGeneric:
         assert repeated_names is False
 
     def test_smart_100_participants(self):
-        """Test that the smart randomize approach with 10 participants can generate a valid Secret Santa linked list."""
+        """Test that the smart randomize approach with 100 participants can generate a valid Secret Santa linked list."""
         print("Running test_smart_100_participants")
 
         # Mock input values for testing
@@ -205,7 +206,7 @@ class TestGeneric:
         cur = head
         counter = 0
         while cur.gifted_to is not None and counter < 100:
-            print(f"{cur.name} --> ")
+            #print(f"{cur.name} --> ")
             
             # check for repeated names
             if cur.gifted_to.name in names_assigned:
@@ -218,4 +219,108 @@ class TestGeneric:
 
         # Assert that the linked list is correctly formed
         assert counter == 100
+        assert repeated_names is False
+
+    def test_naive_1000_participants(self):
+        """Test that the naive randomize approach with 1000 participants can generate a valid Secret Santa linked list."""
+        print("Running test_naive_1000_participants")
+
+        # Initialize the Faker instance
+        fake = Faker()
+
+        # Generate a set of 1000 unique random names
+        names = set()
+        while len(names) < 1000:
+            names.add(fake.name())
+
+        # Convert the set to a list
+        mock_inputs = list(names)
+        
+        # Function to simulate sequential user inputs
+        def mock_input(prompt):
+            return mock_inputs.pop(0)
+
+        # Run the function with the mocked input
+        with patch("builtins.input", side_effect=mock_input):    
+            gifterFromID = secretSanta_util.get_names(num_gifters=1000)
+
+        # trigger the naive randomization assignment        
+        start_time = time.time()  # Record the start time
+        head = secretSanta_naiveRandomize.createSecretSantaAssignments(gifterFromID)
+        end_time = time.time()  # Record the end time
+        elapsed_time = end_time - start_time  # Calculate elapsed time
+        print(f"Elapsed time: {elapsed_time}")
+
+        # Traverse the linked list and ensure we have a valid Secret Santa assignment
+        # in addition to no cycles, no names should be repeated
+        names_assigned = set()
+        repeated_names = False
+        cur = head
+        counter = 0
+        while cur.gifted_to is not None and counter < 1000:
+            # print(f"{cur.name} --> ")
+            
+            # check for repeated names
+            if cur.gifted_to.name in names_assigned:
+                repeated_names = True
+                break
+            names_assigned.add(cur.gifted_to.name)
+            
+            cur = cur.gifted_to
+            counter += 1
+
+        # Assert that the linked list is correctly formed
+        assert counter == 1000
+        assert repeated_names is False
+
+    def test_smart_1000_participants(self):
+        """Test that the smart randomize approach with 1000 participants can generate a valid Secret Santa linked list."""
+        print("Running test_smart_1000_participants")
+
+        # Initialize the Faker instance
+        fake = Faker()
+
+        # Generate a set of 1000 unique random names
+        names = set()
+        while len(names) < 1000:
+            names.add(fake.name())
+
+        # Convert the set to a list
+        mock_inputs = list(names)
+        
+        # Function to simulate sequential user inputs
+        def mock_input(prompt):
+            return mock_inputs.pop(0)
+
+        # Run the function with the mocked input
+        with patch("builtins.input", side_effect=mock_input):    
+            gifterFromID = secretSanta_util.get_names(num_gifters=1000)
+
+        # trigger the naive randomization assignment        
+        start_time = time.time()  # Record the start time
+        head = secretSanta_smartRandomize.createSecretSantaAssignments(gifterFromID)
+        end_time = time.time()  # Record the end time
+        elapsed_time = end_time - start_time  # Calculate elapsed time
+        print(f"Elapsed time: {elapsed_time}")
+
+        # Traverse the linked list and ensure we have a valid Secret Santa assignment
+        # in addition to no cycles, no names should be repeated
+        names_assigned = set()
+        repeated_names = False
+        cur = head
+        counter = 0
+        while cur.gifted_to is not None and counter < 1000:
+            # print(f"{cur.name} --> ")
+            
+            # check for repeated names
+            if cur.gifted_to.name in names_assigned:
+                repeated_names = True
+                break
+            names_assigned.add(cur.gifted_to.name)
+            
+            cur = cur.gifted_to
+            counter += 1
+
+        # Assert that the linked list is correctly formed
+        assert counter == 1000
         assert repeated_names is False
